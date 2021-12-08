@@ -1,0 +1,997 @@
+openapi: 3.0.0
+info:
+  title: api
+  version: '0.0.2'
+  description: LT-Hub
+  contact:
+    name: Ahi Ahi
+    url: 'https://ahiahi.com'
+    email: ahiahi@ahiahi.com
+  termsOfService: 'https://lt-hub.ahiahi.com'
+  license:
+    url: 'https://lt-hub.ahiahi.com/license'
+    name: MIT
+servers:
+  - url: 'http://localhost:8080'
+    description: version1
+paths:
+  /ahiahi:
+    get:
+      summary: Ahi Ahi
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+      operationId: get-ahiahi
+      description: ヘルスチェック
+  /api/v1/login:
+    get:
+      summary: Login
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  avatarUrl:
+                    type: string
+                    format: uri
+      operationId: get-api-v1-login
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      description: ログイン情報の取得
+  /api/v1/events:
+    parameters: []
+    get:
+      summary: Get events
+      tags: []
+      operationId: get-api-v1-events
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        eventId:
+                          type: string
+                        title:
+                          type: string
+                        date:
+                          type: string
+                        location:
+                          type: string
+                        state:
+                          type: string
+                        participants:
+                          type: number
+                        hostId:
+                          type: string
+                        hostName:
+                          type: string
+                        avatarUrl:
+                          type: string
+                  fullCount:
+                    type: number
+      description: イベント一覧の取得
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+      x-internal: false
+    post:
+      summary: Create a event
+      tags: []
+      operationId: post-api-v1-events
+      responses:
+        '200':
+          description: OK
+      description: イベントの作成
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                startTime:
+                  type: string
+                endTime:
+                  type: string
+                location:
+                  type: string
+                state:
+                  type: string
+                hostId:
+                  type: string
+        description: ''
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+  /api/v1/events/created:
+    parameters: []
+    get:
+      summary: Get events created
+      tags: []
+      operationId: get-api-v1-events-created
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        eventId:
+                          type: string
+                        title:
+                          type: string
+                        date:
+                          type: string
+                        location:
+                          type: string
+                        state:
+                          type: string
+                        participants:
+                          type: number
+                        hostId:
+                          type: string
+                        hostName:
+                          type: string
+                        avatarUrl:
+                          type: string
+                  fullCount:
+                    type: number
+      description: ユーザが作成したイベント一覧の取得
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+      x-internal: false
+  /api/v1/events/joined:
+    parameters: []
+    get:
+      summary: Get events joined
+      tags: []
+      operationId: get-api-v1-events-joined
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        eventId:
+                          type: string
+                        title:
+                          type: string
+                        date:
+                          type: string
+                        location:
+                          type: string
+                        state:
+                          type: string
+                        participants:
+                          type: number
+                        hostId:
+                          type: string
+                        hostName:
+                          type: string
+                        avatarUrl:
+                          type: string
+                  fullCount:
+                    type: number
+      description: 'ユーザが参加したイベントのうち, 開始時刻が現在以降のイベント一覧の取得'
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+      x-internal: false
+  /api/v1/events/mypage:
+    parameters: []
+    get:
+      summary: Get events mypage
+      tags: []
+      operationId: get-api-v1-events-mypage
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        eventId:
+                          type: string
+                        title:
+                          type: string
+                        date:
+                          type: string
+                        location:
+                          type: string
+                        state:
+                          type: string
+                        participants:
+                          type: number
+                        hostId:
+                          type: string
+                        hostName:
+                          type: string
+                        avatarUrl:
+                          type: string
+      description: |-
+        マイページのユーザが参加したイベント一覧の取得
+        - tokenがプロ研ならすべての参加イベントを返却
+        - userIdとtokenが一致したらすべての参加イベントを返却
+        - userIdとtokenが異なる場合, 外部ユーザなので, 重複した参加済みイベントを返却
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - schema:
+            type: string
+          in: query
+          name: userId
+          required: true
+      x-internal: false
+  '/api/v1/events/{eventId}':
+    parameters:
+      - schema:
+          type: string
+        name: eventId
+        in: path
+        required: true
+    get:
+      summary: Get a event
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event:
+                    type: object
+                    properties:
+                      eventId:
+                        type: string
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      startTime:
+                        type: string
+                      endTime:
+                        type: string
+                      location:
+                        type: string
+                      hostId:
+                        type: string
+                      hostName:
+                        type: string
+                      avatarUrl:
+                        type: string
+                  joined:
+                    type: boolean
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event:
+                    type: object
+                    properties:
+                      eventId:
+                        type: string
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      startTime:
+                        type: string
+                      endTime:
+                        type: string
+                      location:
+                        type: string
+                      hostId:
+                        type: string
+                      hostName:
+                        type: string
+                      avatarUrl:
+                        type: string
+                  state:
+                    type: string
+                    enum:
+                      - request
+                      - pending
+                      - banned
+      operationId: get-api-v1-events-eventId
+      description: イベントの取得
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+    put:
+      summary: Update a event
+      tags: []
+      operationId: put-api-v1-events-eventId
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event:
+                  type: object
+                  properties:
+                    eventId:
+                      type: string
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    startTime:
+                      type: string
+                    endTime:
+                      type: string
+                    location:
+                      type: string
+                    state:
+                      type: string
+        description: ''
+      description: イベントの更新
+    delete:
+      summary: Delete a event
+      tags: []
+      operationId: delete-api-v1-events-eventId
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      description: |-
+        イベントの削除
+        - イベントに紐づく参加者の削除
+        - イベントに紐づくトークの削除
+  '/api/v1/participants/{eventId}':
+    parameters:
+      - schema:
+          type: string
+        name: eventId
+        in: path
+        required: true
+    get:
+      summary: Get participants
+      tags: []
+      operationId: get-api-v1-participants-eventId
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  participants:
+                    type: array
+                    uniqueItems: false
+                    items:
+                      type: object
+                      properties:
+                        participantId:
+                          type: string
+                        userId:
+                          type: string
+                          format: uuid
+                        userName:
+                          type: string
+                        avatarUrl:
+                          type: string
+                          format: uri
+                        state:
+                          type: string
+                          enum:
+                            - valid
+                            - pending
+                            - banned
+                  sum:
+                    type: number
+      description: |-
+        参加者一覧の取得
+        - valid
+        - pending
+        - banned
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: bearer token
+          required: true
+        - schema:
+            type: string
+            enum:
+              - all
+              - valid
+              - pending
+              - banned
+          in: query
+          name: state
+          required: true
+      x-internal: false
+    post:
+      summary: Create a participant
+      tags: []
+      operationId: post-api-v1-participants-eventId
+      responses:
+        '200':
+          description: OK
+      description: |-
+        イベントに参加
+        - valid or pending
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventId:
+                  type: string
+                state:
+                  type: string
+                  enum:
+                    - valid
+                    - pending
+        description: ''
+  '/api/v1/participants/{participantId}':
+    parameters:
+      - schema:
+          type: string
+        name: participantId
+        in: path
+        required: true
+    patch:
+      summary: Update a participant
+      tags: []
+      operationId: put-api-v1-participants-participantId
+      responses:
+        '200':
+          description: OK
+      description: 参加者の状態を更新（一部更新なのでPUT）
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                state:
+                  type: string
+                  enum:
+                    - valid
+                    - pending
+                    - banned
+              required:
+                - state
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+    delete:
+      summary: Delete a participant
+      tags: []
+      operationId: delete-api-v1-participants-participantId
+      responses:
+        '200':
+          description: OK
+      description: |-
+        イベントから退出 
+        - イベントに紐づくトークを削除
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+  /api/v1/talks:
+    get:
+      summary: Get talks
+      tags: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  talks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        talkId:
+                          type: string
+                        title:
+                          type: string
+                        userId:
+                          type: string
+                        userName:
+                          type: string
+                        avatarUrl:
+                          type: string
+                        videoId:
+                          type: string
+                        slideUrl:
+                          type: string
+                  fullCount:
+                    type: number
+      operationId: get-api-v1-talks
+      description: イベントに紐づくトーク一覧の取得
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - schema:
+            type: string
+          in: query
+          name: eventId
+          required: true
+    post:
+      summary: Create a talk
+      tags: []
+      operationId: post-api-v1-talks
+      responses:
+        '201':
+          description: Created
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventId:
+                  type: string
+                title:
+                  type: string
+                state:
+                  type: string
+        description: ''
+      description: |-
+        トークの作成
+        - orderの追加
+    parameters: []
+  /api/v1/talks/order:
+    parameters: []
+    put:
+      summary: Update a order
+      tags: []
+      operationId: put-api-v1-talks-order
+      responses:
+        '200':
+          description: OK
+      description: トーク順番の更新
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventId:
+                  type: string
+                order:
+                  type: array
+                  items:
+                    type: string
+        description: ''
+  /api/v1/talks/mypage:
+    get:
+      summary: Get talks mypage
+      tags: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  talks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        talkId:
+                          type: string
+                        title:
+                          type: string
+                        videoId:
+                          type: string
+                        slideUrl:
+                          type: string
+                        userId:
+                          type: string
+                        userName:
+                          type: string
+                        avatarUrl:
+                          type: string
+      operationId: get-api-v1-talks-mypage
+      description: |-
+        マイページのユーザが発表したトーク一覧の取得 
+        - tokenがプロ研ならすべてのトークを返却 
+        - userIdとtokenが一致したらすべてのトークを返却
+        - userIdとtokenが異なる場合, 外部ユーザなので, 重複した参加済みイベントのトーク+公開トークを返却
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - schema:
+            type: string
+          in: query
+          name: userId
+          required: true
+    parameters: []
+  '/api/v1/talks/{talkId}':
+    get:
+      summary: Get a talk
+      tags: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  talkId:
+                    type: string
+                  title:
+                    type: string
+                  eventId:
+                    type: string
+                  eventName:
+                    type: string
+                  state:
+                    type: string
+                  userId:
+                    type: string
+                  userName:
+                    type: string
+                  avatarUrl:
+                    type: string
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  state:
+                    type: string
+                    default: fuck you
+      operationId: get-api-v1-talks-talkId
+      description: トークの取得
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+    parameters:
+      - schema:
+          type: string
+        name: talkId
+        in: path
+        required: true
+    put:
+      summary: Update a talk
+      tags: []
+      operationId: put-api-v1-talks-talkId
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                videoId:
+                  type: string
+                slideUrl:
+                  type: string
+                state:
+                  type: string
+      description: トークの更新
+    delete:
+      summary: Delete a talk
+      tags: []
+      operationId: delete-api-v1-talks-talkId
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      description: トークの削除
+  /api/v1/users:
+    parameters: []
+    post:
+      summary: Create a user
+      tags: []
+      operationId: post-api-v1-users
+      responses:
+        '200':
+          description: OK
+      description: ユーザの作成
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                avatarUrl:
+                  type: string
+                email:
+                  type: string
+        description: ''
+  '/api/v1/users/{userId}':
+    get:
+      summary: Get a user
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  avataUrl:
+                    type: string
+                  name:
+                    type: string
+                  githubId:
+                    type: string
+                  twitterId:
+                    type: string
+      operationId: get-api-v1-users-userId
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      description: ユーザの取得
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+    put:
+      summary: Update a user
+      tags: []
+      operationId: put-api-v1-users-userId
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                userName:
+                  type: string
+                githubId:
+                  type: string
+                twitterId:
+                  type: string
+              required:
+                - userId
+                - userName
+      description: ユーザの更新
+    delete:
+      summary: Delete a user
+      tags: []
+      operationId: delete-api-v1-users-userId
+      responses:
+        '200':
+          description: OK
+      description: |-
+        ユーザの削除
+        - ユーザに紐づくイベント削除
+        - ユーザに紐づくトーク削除
+        - ユーザに紐づくオーダー削除（+更新）
+      deprecated: true
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+  /api/v1/suggests:
+    get:
+      summary: Get suggests
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    theme:
+                      type: string
+      operationId: get-api-v1-suggests
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      description: お題一覧の取得
+    post:
+      summary: Create a suggest
+      tags: []
+      operationId: post-api-v1-suggests
+      responses:
+        '200':
+          description: OK
+      description: お題の作成
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                theme:
+                  type: string
+              required:
+                - theme
+    parameters: []
+  /api/v1/eventsQuery:
+    parameters: []
+    get:
+      summary: Get events query
+      tags: []
+      operationId: get-api-v1-events-query
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        eventId:
+                          type: string
+                        title:
+                          type: string
+                        date:
+                          type: string
+                        location:
+                          type: string
+                        state:
+                          type: string
+                        participants:
+                          type: number
+                        hostId:
+                          type: string
+                        hostName:
+                          type: string
+                        avatarUrl:
+                          type: string
+                  fullCount:
+                    type: number
+      description: |-
+        イベント一覧で取得する内容をクエリパラメータで切り替え
+        - 作成したイベントならhostIdを指定 
+        - 参加予定のイベントならparticipantIdとfromを指定 
+        - マイページならparticipantIdを指定
+        - stateが関わってきたときに対処できるか要検討
+        - クエリの過不足に対処できるか要検討（攻撃を想定）
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - schema:
+            type: string
+          in: query
+          name: page
+          allowEmptyValue: true
+        - schema:
+            type: string
+          in: query
+          name: limit
+          allowEmptyValue: true
+        - schema:
+            type: string
+          in: query
+          name: hostId
+          description: 主催者のユーザID
+        - schema:
+            type: string
+          in: query
+          name: participantId
+          description: 参加者のユーザID
+        - schema:
+            type: string
+          in: query
+          name: from
+          description: いつから開催されたか
+        - schema:
+            type: string
+          in: query
+          name: until
+          description: いつまで開催されたか
+      x-internal: false
+      deprecated: true
+components:  
+  parameters:
+    Authorization:
+      name: IdToken
+      in: header
+      schema:
+        type: string
+      required: true
+    page:
+      name: page
+      in: query
+      schema:
+        type: string
+    limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: string
+
