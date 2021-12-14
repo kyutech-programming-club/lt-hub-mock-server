@@ -559,6 +559,8 @@ paths:
                           type: string
                         avatarUrl:
                           type: string
+                        state:
+                          type: string
                         videoId:
                           type: string
                         slideUrl:
@@ -647,15 +649,17 @@ paths:
                           type: string
                         title:
                           type: string
-                        videoId:
-                          type: string
-                        slideUrl:
-                          type: string
                         userId:
                           type: string
                         userName:
                           type: string
                         avatarUrl:
+                          type: string
+                        state:
+                          type: string
+                        videoId:
+                          type: string
+                        slideUrl:
                           type: string
       operationId: get-api-v1-talks-mypage
       description: |-
