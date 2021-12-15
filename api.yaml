@@ -692,6 +692,8 @@ paths:
                     type: string
                   eventName:
                     type: string
+                  eventState:
+                    type: string
                   state:
                     type: string
                   userId:
