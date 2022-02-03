@@ -474,11 +474,12 @@ paths:
                             - banned
                   participantCount:
                     type: number
-                  state:
+                  joined:
+                    type: boolean
+                  viewState:
                     type: string
                     enum:
-                      - joined
-                      - absent
+                      - browsable
                       - request
                       - pending
                       - banned
