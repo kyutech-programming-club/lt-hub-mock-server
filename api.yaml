@@ -442,6 +442,65 @@ paths:
         name: eventId
         in: path
         required: true
+    get:
+      summary: Get participants
+      tags: []
+      operationId: get-api-v1-participants-eventId
+      responses:
+        "200":
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  participants:
+                    type: array
+                    uniqueItems: false
+                    items:
+                      type: object
+                      properties:
+                        participantId:
+                          type: string
+                        userId:
+                          type: string
+                          format: uuid
+                        userName:
+                          type: string
+                        avatarUrl:
+                          type: string
+                          format: uri
+                        state:
+                          type: string
+                          enum:
+                            - valid
+                            - pending
+                            - banned
+                  sum:
+                    type: number
+      description: 参加者一覧の取得
+        - valid
+        - pending
+        - banned
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: bearer token
+          required: true
+        - schema:
+            type: string
+            enum:
+              - all
+              - valid
+              - pending
+              - banned
+          in: query
+          name: state
+          required: true
+      x-internal: false
     post:
       summary: Create a participant
       tags: []
@@ -508,6 +567,48 @@ paths:
       parameters:
         - $ref: "#/components/parameters/Authorization"
   /api/v1/talks:
+    get:
+      summary: Get talks
+      tags: []
+      responses:
+        "200":
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  talks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        talkId:
+                          type: string
+                        title:
+                          type: string
+                        userId:
+                          type: string
+                        userName:
+                          type: string
+                        avatarUrl:
+                          type: string
+                        videoId:
+                          type: string
+                        slideUrl:
+                          type: string
+                  fullCount:
+                    type: number
+      operationId: get-api-v1-talks
+      description: イベントに紐づくトーク一覧の取得
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+        - schema:
+            type: string
+          in: query
+          name: eventId
+          required: true
     post:
       summary: Create a talk
       tags: []
