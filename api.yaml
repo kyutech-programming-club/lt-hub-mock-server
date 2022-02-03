@@ -309,50 +309,6 @@ paths:
                         type: string
                   joined:
                     type: boolean
-                  talks:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        talkId:
-                          type: string
-                        title:
-                          type: string
-                        userId:
-                          type: string
-                        userName:
-                          type: string
-                        avatarUrl:
-                          type: string
-                        videoId:
-                          type: string
-                        slideUrl:
-                          type: string
-                  talkCount:
-                    type: number
-                  participants:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        participantId:
-                          type: string
-                        userId:
-                          type: string
-                          format: uuid
-                        userName:
-                          type: string
-                        avatarUrl:
-                          type: string
-                          format: uri
-                        state:
-                          type: string
-                          enum:
-                            - valid
-                            - pending
-                            - banned
-                  participantCount:
-                    type: number
         "403":
           description: Forbidden
           content:
@@ -435,6 +391,101 @@ paths:
       parameters:
         - $ref: "#/components/parameters/Authorization"
       description: イベントの削除 - イベントに紐づく参加者の削除 - イベントに紐づくトークの削除
+  /api/v1/events/{eventId}/detail:
+    parameters:
+      - schema:
+          type: string
+        name: eventId
+        in: path
+        required: true
+    get:
+      summary: Get a event
+      tags: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event:
+                    type: object
+                    properties:
+                      eventId:
+                        type: string
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      startTime:
+                        type: string
+                      endTime:
+                        type: string
+                      location:
+                        type: string
+                      hostId:
+                        type: string
+                      hostName:
+                        type: string
+                      avatarUrl:
+                        type: string
+                  talks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        talkId:
+                          type: string
+                        title:
+                          type: string
+                        userId:
+                          type: string
+                        userName:
+                          type: string
+                        avatarUrl:
+                          type: string
+                        videoId:
+                          type: string
+                        slideUrl:
+                          type: string
+                  talkCount:
+                    type: number
+                  participants:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        participantId:
+                          type: string
+                        userId:
+                          type: string
+                          format: uuid
+                        userName:
+                          type: string
+                        avatarUrl:
+                          type: string
+                          format: uri
+                        state:
+                          type: string
+                          enum:
+                            - valid
+                            - pending
+                            - banned
+                  participantCount:
+                    type: number
+                  state:
+                    type: string
+                    enum:
+                      - joined
+                      - absent
+                      - request
+                      - pending
+                      - banned
+      operationId: get-api-v1-events-eventId-detail
+      description: イベントの取得
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
   /api/v1/participants/{eventId}:
     parameters:
       - schema:
