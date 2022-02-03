@@ -1,18 +1,18 @@
 openapi: 3.0.0
 info:
   title: api
-  version: 0.0.2
+  version: "0.0.2"
   description: LT-Hub
   contact:
     name: Ahi Ahi
-    url: https://ahiahi.com
+    url: "https://ahiahi.com"
     email: ahiahi@ahiahi.com
-  termsOfService: https://lt-hub.ahiahi.com
+  termsOfService: "https://lt-hub.ahiahi.com"
   license:
-    url: https://lt-hub.ahiahi.com/license
+    url: "https://lt-hub.ahiahi.com/license"
     name: MIT
 servers:
-  - url: http://localhost:8080
+  - url: "http://localhost:8080"
     description: version1
 paths:
   /ahiahi:
@@ -212,7 +212,7 @@ paths:
                           type: string
                   fullCount:
                     type: number
-      description: ユーザが参加したイベントのうち, 開始時刻が現在以降のイベント一覧の取得
+      description: "ユーザが参加したイベントのうち, 開始時刻が現在以降のイベント一覧の取得"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/page"
@@ -256,10 +256,11 @@ paths:
                           type: string
                         avatarUrl:
                           type: string
-      description:
-        マイページのユーザが参加したイベント一覧の取得 - tokenがプロ研ならすべての参加イベントを返却 -
-        userIdとtokenが一致したらすべての参加イベントを返却 - userIdとtokenが異なる場合, 外部ユーザなので,
-        重複した参加済みイベントを返却
+      description: |-
+        マイページのユーザが参加したイベント一覧の取得
+        - tokenがプロ研ならすべての参加イベントを返却
+        - userIdとtokenが一致したらすべての参加イベントを返却
+        - userIdとtokenが異なる場合, 外部ユーザなので, 重複した参加済みイベントを返却
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - schema:
@@ -268,7 +269,7 @@ paths:
           name: userId
           required: true
       x-internal: false
-  /api/v1/events/{eventId}:
+  "/api/v1/events/{eventId}":
     parameters:
       - schema:
           type: string
@@ -390,7 +391,103 @@ paths:
           description: OK
       parameters:
         - $ref: "#/components/parameters/Authorization"
-      description: イベントの削除 - イベントに紐づく参加者の削除 - イベントに紐づくトークの削除
+      description: |-
+        イベントの削除
+        - イベントに紐づく参加者の削除
+        - イベントに紐づくトークの削除
+  "/api/v1/participants/{eventId}":
+    parameters:
+      - schema:
+          type: string
+        name: eventId
+        in: path
+        required: true
+    get:
+      summary: Get participants
+      tags: []
+      operationId: get-api-v1-participants-eventId
+      responses:
+        "200":
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  participants:
+                    type: array
+                    uniqueItems: false
+                    items:
+                      type: object
+                      properties:
+                        participantId:
+                          type: string
+                        userId:
+                          type: string
+                          format: uuid
+                        userName:
+                          type: string
+                        avatarUrl:
+                          type: string
+                          format: uri
+                        state:
+                          type: string
+                          enum:
+                            - valid
+                            - pending
+                            - banned
+                  sum:
+                    type: number
+      description: |-
+        参加者一覧の取得
+        - valid
+        - pending
+        - banned
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: bearer token
+          required: true
+        - schema:
+            type: string
+            enum:
+              - all
+              - valid
+              - pending
+              - banned
+          in: query
+          name: state
+          required: true
+      x-internal: false
+    post:
+      summary: Create a participant
+      tags: []
+      operationId: post-api-v1-participants-eventId
+      responses:
+        "200":
+          description: OK
+      description: |-
+        イベントに参加
+        - valid or pending
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventId:
+                  type: string
+                state:
+                  type: string
+                  enum:
+                    - valid
+                    - pending
+        description: ""
   /api/v1/events/{eventId}/detail:
     parameters:
       - schema:
@@ -487,97 +584,7 @@ paths:
       description: イベントの取得
       parameters:
         - $ref: "#/components/parameters/Authorization"
-  /api/v1/participants/{eventId}:
-    parameters:
-      - schema:
-          type: string
-        name: eventId
-        in: path
-        required: true
-    get:
-      summary: Get participants
-      tags: []
-      operationId: get-api-v1-participants-eventId
-      responses:
-        "200":
-          description: OK
-          headers: {}
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  participants:
-                    type: array
-                    uniqueItems: false
-                    items:
-                      type: object
-                      properties:
-                        participantId:
-                          type: string
-                        userId:
-                          type: string
-                          format: uuid
-                        userName:
-                          type: string
-                        avatarUrl:
-                          type: string
-                          format: uri
-                        state:
-                          type: string
-                          enum:
-                            - valid
-                            - pending
-                            - banned
-                  sum:
-                    type: number
-      description: 参加者一覧の取得
-        - valid
-        - pending
-        - banned
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Authorization
-          description: bearer token
-          required: true
-        - schema:
-            type: string
-            enum:
-              - all
-              - valid
-              - pending
-              - banned
-          in: query
-          name: state
-          required: true
-      x-internal: false
-    post:
-      summary: Create a participant
-      tags: []
-      operationId: post-api-v1-participants-eventId
-      responses:
-        "200":
-          description: OK
-      description: イベントに参加 - valid or pending
-      parameters:
-        - $ref: "#/components/parameters/Authorization"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                eventId:
-                  type: string
-                state:
-                  type: string
-                  enum:
-                    - valid
-                    - pending
-        description: ""
-  /api/v1/participants/{participantId}:
+  "/api/v1/participants/{participantId}":
     parameters:
       - schema:
           type: string
@@ -615,7 +622,9 @@ paths:
       responses:
         "200":
           description: OK
-      description: イベントから退出 - イベントに紐づくトークを削除
+      description: |-
+        イベントから退出 
+        - イベントに紐づくトークを削除
       parameters:
         - $ref: "#/components/parameters/Authorization"
   /api/v1/talks:
@@ -683,7 +692,9 @@ paths:
                 state:
                   type: string
         description: ""
-      description: トークの作成 - orderの追加
+      description: |-
+        トークの作成
+        - orderの追加
     parameters: []
   /api/v1/talks/order:
     parameters: []
@@ -743,10 +754,11 @@ paths:
                         avatarUrl:
                           type: string
       operationId: get-api-v1-talks-mypage
-      description:
-        マイページのユーザが発表したトーク一覧の取得 - tokenがプロ研ならすべてのトークを返却 -
-        userIdとtokenが一致したらすべてのトークを返却 - userIdとtokenが異なる場合, 外部ユーザなので,
-        重複した参加済みイベントのトーク+公開トークを返却
+      description: |-
+        マイページのユーザが発表したトーク一覧の取得 
+        - tokenがプロ研ならすべてのトークを返却 
+        - userIdとtokenが一致したらすべてのトークを返却
+        - userIdとtokenが異なる場合, 外部ユーザなので, 重複した参加済みイベントのトーク+公開トークを返却
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - schema:
@@ -755,7 +767,7 @@ paths:
           name: userId
           required: true
     parameters: []
-  /api/v1/talks/{talkId}:
+  "/api/v1/talks/{talkId}":
     get:
       summary: Get a talk
       tags: []
@@ -865,7 +877,7 @@ paths:
                 email:
                   type: string
         description: ""
-  /api/v1/users/{userId}:
+  "/api/v1/users/{userId}":
     get:
       summary: Get a user
       tags: []
@@ -931,7 +943,11 @@ paths:
       responses:
         "200":
           description: OK
-      description: ユーザの削除 - ユーザに紐づくイベント削除 - ユーザに紐づくトーク削除 - ユーザに紐づくオーダー削除（+更新）
+      description: |-
+        ユーザの削除
+        - ユーザに紐づくイベント削除
+        - ユーザに紐づくトーク削除
+        - ユーザに紐づくオーダー削除（+更新）
       deprecated: true
       parameters:
         - $ref: "#/components/parameters/Authorization"
@@ -1016,10 +1032,13 @@ paths:
                           type: string
                   fullCount:
                     type: number
-      description:
-        イベント一覧で取得する内容をクエリパラメータで切り替え - 作成したイベントならhostIdを指定 -
-        参加予定のイベントならparticipantIdとfromを指定 - マイページならparticipantIdを指定 -
-        stateが関わってきたときに対処できるか要検討 - クエリの過不足に対処できるか要検討（攻撃を想定）
+      description: |-
+        イベント一覧で取得する内容をクエリパラメータで切り替え
+        - 作成したイベントならhostIdを指定 
+        - 参加予定のイベントならparticipantIdとfromを指定 
+        - マイページならparticipantIdを指定
+        - stateが関わってきたときに対処できるか要検討
+        - クエリの過不足に対処できるか要検討（攻撃を想定）
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - schema:
